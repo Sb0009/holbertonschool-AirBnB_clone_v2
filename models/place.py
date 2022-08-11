@@ -57,7 +57,7 @@ class Place(BaseModel, Base):
     else:
         @property
         def reviews(self):
-            """"""
+            """."""
             my_list = []
             all_review = models.storage.all('Review')
             for key, value in all_review.items():
@@ -67,7 +67,7 @@ class Place(BaseModel, Base):
 
         @property
         def amenities(self):
-            """"""
+            """."""
             my_list = []
             all_amenity = models.storage.all('Amenity')
             for key, value in all_amenity.items():
