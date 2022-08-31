@@ -10,7 +10,7 @@ from os.path import exists, isdir
 env.hosts = ['3.80.49.230', '204.236.197.173']
 
 
-def do_pack():
+def do_deploy():
         """Creates a tgz archive using fabric"""
         try:
             date = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -47,7 +47,7 @@ def do_pack():
 
             def deploy():
                  """ do path an do deploy"""
-                 archive_path = do_pack()
+                 archive_path = do_deploy()
                  if archive_path is None:
                      return False
                  return do_deploy(archive_path)
