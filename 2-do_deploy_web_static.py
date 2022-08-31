@@ -11,43 +11,39 @@ env.hosts = ['3.80.49.230', '204.236.197.173']
 env.user = 'ubuntu'
 
 def do_pack():
-        """Creates a tgz archive using fabric"""
+        """ The function do_pack """
+        local("mkdir -p versions")
+        time = datetime.strftime(datetime.now(), "%Y%m%d%H%M%S")
+        filename = "versions/web_static_{}.tgz".format(time)
         try:
-            date = datetime.now().strftime("%Y%m%d%H%M%S")
-            if isdir("versions") is False:
-                local("mkdir versions")
-                filename = "versions/web_static_{}.tgz".format(date)
-                local("tar -cvzf {} web_static".format(filename))
+                local("tar -czvf {} web_static".format(filename))
                 return filename
-        except Exception as ex:
-                 return None
+        except Exception:
+                return None
 
 
-        def do_deploy(archive_path):
-            """deploy web static with fabric"""
-            if exists(archive_path) is False:
+def do_deploy(archive_path):
+        """ The function do_deploy """
+        if not exists(archive_path):
                 return False
-
-            try:
-                filename = archive_path.split("/")[-1]
-                no_excep = filename.split(".")[0]
+        try:
+                """archive_path = versions/web_static_20170315003959.tgz """
+                file_name = archive_path.split("/")[-1]
+                "file_name = web_static_20170315003959.tgz"""
+                no_ext = file_name.split(".")[0]
+                """no_ext = web_static_20170315003959"""
                 path = "/data/web_static/releases/"
+                """Upload the archive to the /tmp/ directory of the web server"""
                 put(archive_path, '/tmp/')
-                run('sudo mkdir -p {}{}/'.format(path, no_excep))
-                run('sudo tar -xzf /tmp/{} -C {}{}/'.format(filename, path, no_excep))
-                run('sudo rm /tmp/{}'.format(filename))
-                run('sudo mv {0}{1}/web_static/* {0}{1}/'.format(path, no_excep))
-                run('sudo rm -rf {}{}/web_static'.format(path, no_excep))
-                run('sudo rm -rf /data/web_static/current')
-                run('sudo ln -s {}{}/ /data/web_static/current'.format(path, no_excep))
+                run('mkdir -p {}{}/'.format(path, no_ext))
+                """Uncompress the archive"""
+                run('tar -xzf /tmp/{} -C {}{}/'.format(file_name, path, no_ext))
+                run('rm /tmp/{}'.format(file_name))
+                run('mv {0}{1}/web_static/* {0}{1}/'.format(path, no_ext))
+                run('rm -rf {}{}/web_static'.format(path, no_ext))
+                run('rm -rf /data/web_static/current')
+                run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
+                print("New version deployed!")
                 return True
-            except BaseException:
+        except Exception:
                 return False
-
-
-            def deploy():
-                 """ do path an do deploy"""
-                 archive_path = do_pack()
-                 if archive_path is None:
-                     return False
-                 return do_deploy(archive_path)
