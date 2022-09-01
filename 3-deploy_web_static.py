@@ -20,7 +20,7 @@ def do_pack():
             local("tar -cvzf {} web_static".format(filename))
             return filename
     except Exception as ex:
-        return None
+           return None
 
 def do_deploy(archive_path):
     """deploy web static with fabric"""
